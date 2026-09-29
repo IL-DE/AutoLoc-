@@ -33,11 +33,13 @@ public class Agence {
     @Column(nullable = false, length = 20)
     private String telephone;
 
-    // Une agence possede plusieurs vehicules
+
     @OneToMany(mappedBy = "agence", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Vehicule> vehicules = new ArrayList<>();
 
-    // Une agence emploie plusieurs employes
+
     @OneToMany(mappedBy = "agence", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Employe> employes = new ArrayList<>();
+
+
 }
