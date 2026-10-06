@@ -30,6 +30,5 @@ public class Maintenance {
     private String description;
 
     @ManyToOne
-
    Vehicule vehicule;
 }

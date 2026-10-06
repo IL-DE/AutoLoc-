@@ -43,6 +43,11 @@ public class Vehicule {
     private List<Reservation> reservations = new ArrayList<>();
 
     @ManyToMany
+    @JoinTable(
+            name = "vehicule_equipements",
+            joinColumns = @JoinColumn(name = "vehicule_id"),
+            inverseJoinColumns = @JoinColumn(name = "equipement_id")
+    )
     private List<Equipement> equipements = new ArrayList<>();
 
 
