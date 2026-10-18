@@ -1,13 +1,12 @@
 package tn.esprit.autoloc.service;
 
 import tn.esprit.autoloc.domain.Maintenance;
-
 import java.util.List;
 
 public interface IMaintenanceService {
-    List<Maintenance> retrieveAllMaintenances();
-    Maintenance addMaintenance(Maintenance m);
-    Maintenance updateMaintenance(Maintenance m);
-    Maintenance retrieveMaintenance(Long idMaintenance);
-    void removeMaintenance(Long idMaintenance);
+    Maintenance create(Maintenance maintenance);
+    Maintenance findById(Long id);
+    List<Maintenance> findAll();
+    Maintenance update(Long id, Maintenance maintenance);
+    void deleteById(Long id);
 }
