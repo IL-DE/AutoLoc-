@@ -1,8 +1,12 @@
 package tn.esprit.autoloc.web.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.autoloc.domain.Equipement;
 import tn.esprit.autoloc.service.IEquipementService;
@@ -10,36 +14,62 @@ import tn.esprit.autoloc.service.IEquipementService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/equipements")
+@RequestMapping("/equipements")
 @RequiredArgsConstructor
+@Tag(name = "Equipements", description = "Gestion des équipements optionnels des véhicules")
 public class EquipementController {
 
     private final IEquipementService equipementService;
 
-    @PostMapping
-    public ResponseEntity<Equipement> create(@RequestBody Equipement equipement) {
-        Equipement created = equipementService.create(equipement);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Equipement> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(equipementService.findById(id));
-    }
-
+    @Operation(summary = "Lister tous les équipements")
+    @ApiResponse(responseCode = "200", description = "Liste des équipements récupérée avec succès")
     @GetMapping
-    public ResponseEntity<List<Equipement>> findAll() {
-        return ResponseEntity.ok(equipementService.findAll());
+    public List<Equipement> findAll() {
+        return equipementService.findAll();
     }
 
+    @Operation(summary = "Consulter un équipement par son identifiant")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Équipement trouvé"),
+            @ApiResponse(responseCode = "404", description = "Équipement introuvable")
+    })
+    @GetMapping("/{id}")
+    public Equipement findById(@Parameter(description = "Identifiant de l'équipement") @PathVariable Long id) {
+        return equipementService.findById(id);
+    }
+
+    @Operation(summary = "Créer un nouvel équipement")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Équipement créé avec succès"),
+            @ApiResponse(responseCode = "400", description = "Données invalides (ex. libellé vide)")
+    })
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Equipement create(@RequestBody Equipement equipement) {
+        return equipementService.create(equipement);
+    }
+
+    @Operation(summary = "Mettre à jour un équipement")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Équipement mis à jour avec succès"),
+            @ApiResponse(responseCode = "400", description = "Données invalides"),
+            @ApiResponse(responseCode = "404", description = "Équipement introuvable")
+    })
     @PutMapping("/{id}")
-    public ResponseEntity<Equipement> update(@PathVariable Long id, @RequestBody Equipement equipement) {
-        return ResponseEntity.ok(equipementService.update(id, equipement));
+    public Equipement update(
+            @Parameter(description = "Identifiant de l'équipement") @PathVariable Long id,
+            @RequestBody Equipement equipement) {
+        return equipementService.update(id, equipement);
     }
 
+    @Operation(summary = "Supprimer un équipement")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Équipement supprimé avec succès"),
+            @ApiResponse(responseCode = "404", description = "Équipement introuvable")
+    })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteById(@Parameter(description = "Identifiant de l'équipement") @PathVariable Long id) {
         equipementService.deleteById(id);
-        return ResponseEntity.noContent().build();
     }
 }

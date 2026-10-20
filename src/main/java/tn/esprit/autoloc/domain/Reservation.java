@@ -37,6 +37,7 @@ public class Reservation {
     Client client;
 
     @OneToOne(mappedBy = "reservation", cascade = CascadeType.ALL)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     Contrat contrat;
 
 }

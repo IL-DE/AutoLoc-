@@ -35,10 +35,11 @@ public class Agence {
 
 
     @OneToMany(mappedBy = "agence", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private List<Vehicule> vehicules = new ArrayList<>();
 
-
     @OneToMany(mappedBy = "agence", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private List<Employe> employes = new ArrayList<>();
 
 

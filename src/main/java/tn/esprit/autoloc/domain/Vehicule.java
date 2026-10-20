@@ -37,9 +37,11 @@ public class Vehicule {
    Agence agence;
 
     @OneToMany(mappedBy = "vehicule", cascade = CascadeType.ALL)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private List<Maintenance> maintenances = new ArrayList<>();
 
     @OneToMany(mappedBy = "vehicule")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private List<Reservation> reservations = new ArrayList<>();
 
     @ManyToMany

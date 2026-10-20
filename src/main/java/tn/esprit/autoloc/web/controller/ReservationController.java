@@ -1,8 +1,12 @@
 package tn.esprit.autoloc.web.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.autoloc.domain.Reservation;
 import tn.esprit.autoloc.service.IReservationService;
@@ -10,36 +14,62 @@ import tn.esprit.autoloc.service.IReservationService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/reservations")
+@RequestMapping("/reservations")
 @RequiredArgsConstructor
+@Tag(name = "Reservations", description = "Gestion des réservations de véhicules")
 public class ReservationController {
 
     private final IReservationService reservationService;
 
-    @PostMapping
-    public ResponseEntity<Reservation> create(@RequestBody Reservation reservation) {
-        Reservation created = reservationService.create(reservation);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Reservation> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(reservationService.findById(id));
-    }
-
+    @Operation(summary = "Lister toutes les réservations")
+    @ApiResponse(responseCode = "200", description = "Liste des réservations récupérée avec succès")
     @GetMapping
-    public ResponseEntity<List<Reservation>> findAll() {
-        return ResponseEntity.ok(reservationService.findAll());
+    public List<Reservation> findAll() {
+        return reservationService.findAll();
     }
 
+    @Operation(summary = "Consulter une réservation par son identifiant")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Réservation trouvée"),
+            @ApiResponse(responseCode = "404", description = "Réservation introuvable")
+    })
+    @GetMapping("/{id}")
+    public Reservation findById(@Parameter(description = "Identifiant de la réservation") @PathVariable Long id) {
+        return reservationService.findById(id);
+    }
+
+    @Operation(summary = "Créer une nouvelle réservation")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Réservation créée avec succès"),
+            @ApiResponse(responseCode = "400", description = "Données invalides (ex. date de fin antérieure à date de début)")
+    })
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Reservation create(@RequestBody Reservation reservation) {
+        return reservationService.create(reservation);
+    }
+
+    @Operation(summary = "Mettre à jour une réservation")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Réservation mise à jour avec succès"),
+            @ApiResponse(responseCode = "400", description = "Données invalides"),
+            @ApiResponse(responseCode = "404", description = "Réservation introuvable")
+    })
     @PutMapping("/{id}")
-    public ResponseEntity<Reservation> update(@PathVariable Long id, @RequestBody Reservation reservation) {
-        return ResponseEntity.ok(reservationService.update(id, reservation));
+    public Reservation update(
+            @Parameter(description = "Identifiant de la réservation") @PathVariable Long id,
+            @RequestBody Reservation reservation) {
+        return reservationService.update(id, reservation);
     }
 
+    @Operation(summary = "Supprimer une réservation")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Réservation supprimée avec succès"),
+            @ApiResponse(responseCode = "404", description = "Réservation introuvable")
+    })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteById(@Parameter(description = "Identifiant de la réservation") @PathVariable Long id) {
         reservationService.deleteById(id);
-        return ResponseEntity.noContent().build();
     }
 }
